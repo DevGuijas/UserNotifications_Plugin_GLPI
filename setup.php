@@ -1,27 +1,25 @@
 <?php
 
-use Glpi\Plugin\HookManager;
 use Glpi\Plugin\Hooks;
-use GlpiPlugin\Usernotifications\Manager;
 
-define('PLUGIN_USERNOTIFICATIONS_VERSION', '1.0.1');
+define('PLUGIN_USERNOTIFICATIONS_VERSION', '1.0.2');
 define('PLUGIN_USERNOTIFICATIONS_MIN_GLPI_VERSION', '11.0.1');
 define('PLUGIN_USERNOTIFICATIONS_MAX_GLPI_VERSION', '11.1.0');
 
+/**
+ * Asset-only initialization. Event listeners are intentionally not registered
+ * here: a faulty listener must never prevent a GLPI page from loading.
+ */
 function plugin_init_usernotifications(): void
 {
+    global $PLUGIN_HOOKS;
+
     if (!Plugin::isPluginActive('usernotifications') || Session::getLoginUserID() <= 0) {
         return;
     }
-    $hooks = new HookManager('usernotifications');
-    $hooks->registerJavascriptFile('js/notification-bell.js');
-    $hooks->registerCSSFile('css/notification-bell.css');
-    $hooks->registerItemHook(Hooks::ITEM_ADD, Ticket_User::class, [Manager::class, 'onTicketUserAdded']);
-    $hooks->registerItemHook(Hooks::ITEM_UPDATE, Ticket::class, [Manager::class, 'onTicketUpdated']);
-    $hooks->registerItemHook(Hooks::ITEM_ADD, ITILFollowup::class, [Manager::class, 'onFollowupAdded']);
-    $hooks->registerItemHook(Hooks::ITEM_ADD, TicketTask::class, [Manager::class, 'onTaskAdded']);
-    $hooks->registerItemHook(Hooks::ITEM_ADD, TicketValidation::class, [Manager::class, 'onValidationAdded']);
-    $hooks->registerItemHook(Hooks::ITEM_UPDATE, TicketValidation::class, [Manager::class, 'onValidationUpdated']);
+
+    $PLUGIN_HOOKS[Hooks::ADD_JAVASCRIPT]['usernotifications'] = ['js/notification-bell.js'];
+    $PLUGIN_HOOKS[Hooks::ADD_CSS]['usernotifications'] = ['css/notification-bell.css'];
 }
 
 function plugin_version_usernotifications(): array

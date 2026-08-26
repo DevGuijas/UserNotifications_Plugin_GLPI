@@ -1,4 +1,4 @@
-# Sino de notificações para GLPI 11
+# Sino de notificações para GLPI 11 (1.0.2)
 
 Plugin para GLPI 11.0.1+ que adiciona um sino imediatamente à esquerda do menu de perfil. Ele exibe atualizações recebidas pelos usuários atribuídos ao chamado, novas atribuições e solicitações de aprovação.
 
