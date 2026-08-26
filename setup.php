@@ -2,7 +2,7 @@
 
 use Glpi\Plugin\Hooks;
 
-define('PLUGIN_USERNOTIFICATIONS_VERSION', '1.0.11');
+define('PLUGIN_USERNOTIFICATIONS_VERSION', '1.0.12');
 define('PLUGIN_USERNOTIFICATIONS_MIN_GLPI_VERSION', '11.0.1');
 define('PLUGIN_USERNOTIFICATIONS_MAX_GLPI_VERSION', '11.1.0');
 
@@ -27,7 +27,7 @@ function plugin_version_usernotifications(): array
     return [
         'name' => 'Sino de notificações',
         'version' => PLUGIN_USERNOTIFICATIONS_VERSION,
-        'author' => 'SCRB',
+        'author' => '@DevGuijas - Github',
         'license' => 'GPL-3.0-or-later',
         'requirements' => ['glpi' => ['min' => PLUGIN_USERNOTIFICATIONS_MIN_GLPI_VERSION, 'max' => PLUGIN_USERNOTIFICATIONS_MAX_GLPI_VERSION]],
     ];

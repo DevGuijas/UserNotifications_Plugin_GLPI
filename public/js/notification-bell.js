@@ -53,7 +53,7 @@
                 item.className = `usernotifications-item${notification.is_read ? ' is-read' : ''}`;
                 item.href = notification.url;
                 const icon = document.createElement('i');
-                icon.className = notification.kind === 'approval' ? 'ti ti-circle-check' : 'ti ti-ticket';
+                icon.className = notification.kind === 'approval' ? 'ti ti-circle-check' : notification.kind === 'mention' ? 'ti ti-at' : 'ti ti-ticket';
                 const text = document.createElement('span'); text.className = 'usernotifications-text';
                 const message = document.createElement('span'); message.textContent = notification.message;
                 const time = document.createElement('small'); time.textContent = formatDate(notification.date_creation);

@@ -76,6 +76,7 @@ final class Manager
         $ticketId = (int) ($followup->fields['items_id'] ?? 0);
         if ($ticketId > 0) {
             self::notifyAssignedUsers($ticketId, (int) ($followup->fields['users_id'] ?? 0), 'followup', sprintf(__('Há uma atualização no chamado #%d.', 'usernotifications'), $ticketId), 'followup:' . $followup->getID());
+            self::notifyMentionedUsers($followup->fields);
         }
     }
 
@@ -99,6 +100,7 @@ final class Manager
         global $DB;
         self::purgeExpired();
         self::importPendingApprovals($userId);
+        self::importMentionNotifications($userId);
         $notifications = [];
         foreach ($DB->request(['FROM' => self::getTable(), 'WHERE' => ['users_id' => $userId], 'ORDER' => ['is_read ASC', 'date_creation DESC'], 'LIMIT' => 100]) as $row) {
             $notifications[] = ['id' => (int) $row['id'], 'ticket_id' => (int) $row['ticket_id'], 'kind' => (string) $row['kind'], 'message' => (string) $row['message'], 'is_read' => (bool) $row['is_read'], 'date_creation' => (string) $row['date_creation'], 'url' => '/front/ticket.form.php?id=' . (int) $row['ticket_id']];
@@ -163,11 +165,58 @@ final class Manager
         }
     }
 
-    private static function add(int $userId, int $ticketId, string $kind, string $message, string $sourceKey): void
+    /**
+     * Imports native GLPI user mentions from ticket followups created during
+     * the retention window. The native mention helper reads data-user-mention
+     * attributes written by the rich text editor, rather than parsing @names.
+     */
+    private static function importMentionNotifications(int $userId): void
+    {
+        global $DB;
+        $cutoff = date('Y-m-d H:i:s', strtotime('-' . self::RETENTION_DAYS . ' days'));
+        foreach ($DB->request([
+            'FROM'  => ITILFollowup::getTable(),
+            'WHERE' => [
+                'itemtype'      => Ticket::class,
+                'date_creation' => ['>=', $cutoff],
+            ],
+            'ORDER' => ['date_creation DESC'],
+        ]) as $followup) {
+            $mentions = \Glpi\RichText\UserMention::getUserIdsFromUserMentions((string) ($followup['content'] ?? ''));
+            if (!in_array($userId, $mentions, true)) {
+                continue;
+            }
+            self::notifyMentionedUsers($followup, $userId);
+        }
+    }
+
+    /** @param array<string, mixed> $followup */
+    private static function notifyMentionedUsers(array $followup, ?int $onlyUserId = null): void
+    {
+        $ticketId = (int) ($followup['items_id'] ?? 0);
+        $followupId = (int) ($followup['id'] ?? 0);
+        $authorId = (int) ($followup['users_id'] ?? 0);
+        if ($ticketId <= 0 || $followupId <= 0) {
+            return;
+        }
+
+        $mentionedUserIds = \Glpi\RichText\UserMention::getUserIdsFromUserMentions((string) ($followup['content'] ?? ''));
+        foreach ($mentionedUserIds as $recipientId) {
+            $recipientId = (int) $recipientId;
+            if ($recipientId <= 0 || $recipientId === $authorId || ($onlyUserId !== null && $recipientId !== $onlyUserId)) {
+                continue;
+            }
+            $authorName = $authorId > 0 ? getUserName($authorId) : __('Um usuário', 'usernotifications');
+            $message = sprintf(__('%s mencionou você no chamado #%d.', 'usernotifications'), $authorName, $ticketId);
+            self::add($recipientId, $ticketId, 'mention', $message, 'mention:' . $followupId, (string) ($followup['date_creation'] ?? ''));
+        }
+    }
+
+    private static function add(int $userId, int $ticketId, string $kind, string $message, string $sourceKey, string $dateCreation = ''): void
     {
         global $DB;
         if ($userId <= 0 || self::exists($userId, $sourceKey)) { return; }
-        $DB->insert(self::getTable(), ['users_id' => $userId, 'ticket_id' => $ticketId, 'kind' => $kind, 'message' => $message, 'source_key' => $sourceKey, 'date_creation' => date('Y-m-d H:i:s')]);
+        $DB->insert(self::getTable(), ['users_id' => $userId, 'ticket_id' => $ticketId, 'kind' => $kind, 'message' => $message, 'source_key' => $sourceKey, 'date_creation' => $dateCreation !== '' ? $dateCreation : date('Y-m-d H:i:s')]);
     }
 
     private static function exists(int $userId, string $sourceKey): bool
