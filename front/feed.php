@@ -7,10 +7,12 @@ try {
     $userId = (int) Session::getLoginUserID();
     $notifications = $userId > 0 ? Manager::getForUser($userId) : [];
     $unread = count(array_filter($notifications, static fn(array $notification): bool => !$notification['is_read']));
+    $markToken = bin2hex(random_bytes(32));
+    $_SESSION['plugin_usernotifications_mark_token'] = $markToken;
     echo json_encode([
         'notifications' => $notifications,
         'unread' => $unread,
-        'csrf_token' => Session::getNewCSRFToken(),
+        'mark_token' => $markToken,
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 } catch (\Throwable $exception) {
     Toolbox::logInFile('php-errors', 'usernotifications feed: ' . $exception->getMessage() . PHP_EOL);
