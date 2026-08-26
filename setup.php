@@ -4,7 +4,7 @@ use Glpi\Plugin\HookManager;
 use Glpi\Plugin\Hooks;
 use GlpiPlugin\Usernotifications\Manager;
 
-define('PLUGIN_USERNOTIFICATIONS_VERSION', '1.0.0');
+define('PLUGIN_USERNOTIFICATIONS_VERSION', '1.0.1');
 define('PLUGIN_USERNOTIFICATIONS_MIN_GLPI_VERSION', '11.0.1');
 define('PLUGIN_USERNOTIFICATIONS_MAX_GLPI_VERSION', '11.1.0');
 
@@ -14,8 +14,8 @@ function plugin_init_usernotifications(): void
         return;
     }
     $hooks = new HookManager('usernotifications');
-    $hooks->registerJavascriptFile('public/js/notification-bell.js');
-    $hooks->registerCSSFile('public/css/notification-bell.css');
+    $hooks->registerJavascriptFile('js/notification-bell.js');
+    $hooks->registerCSSFile('css/notification-bell.css');
     $hooks->registerItemHook(Hooks::ITEM_ADD, Ticket_User::class, [Manager::class, 'onTicketUserAdded']);
     $hooks->registerItemHook(Hooks::ITEM_UPDATE, Ticket::class, [Manager::class, 'onTicketUpdated']);
     $hooks->registerItemHook(Hooks::ITEM_ADD, ITILFollowup::class, [Manager::class, 'onFollowupAdded']);
