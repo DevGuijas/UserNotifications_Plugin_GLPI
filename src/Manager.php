@@ -112,6 +112,16 @@ final class Manager
         $DB->update(self::getTable(), ['is_read' => 1, 'date_read' => date('Y-m-d H:i:s')], ['users_id' => $userId, 'is_read' => 0]);
     }
 
+    public static function markAsRead(int $userId, int $notificationId): void
+    {
+        global $DB;
+        $DB->update(self::getTable(), ['is_read' => 1, 'date_read' => date('Y-m-d H:i:s')], [
+            'id' => $notificationId,
+            'users_id' => $userId,
+            'is_read' => 0,
+        ]);
+    }
+
     private static function notifyAssignedUsers(int $ticketId, int $authorId, string $kind, string $message, string $sourceKey): void
     {
         $ticket = new Ticket();
