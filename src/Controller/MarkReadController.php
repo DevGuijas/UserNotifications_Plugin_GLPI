@@ -3,6 +3,8 @@
 namespace GlpiPlugin\Usernotifications\Controller;
 
 use Glpi\Controller\AbstractController;
+use Glpi\Http\Firewall;
+use Glpi\Security\Attribute\SecurityStrategy;
 use GlpiPlugin\Usernotifications\Manager;
 use Session;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -15,6 +17,7 @@ use Symfony\Component\Routing\Attribute\Route;
 final class MarkReadController extends AbstractController
 {
     #[Route('/notifications/mark-read', name: 'usernotifications_mark_read', methods: ['GET', 'POST'])]
+    #[SecurityStrategy(Firewall::STRATEGY_AUTHENTICATED)]
     public function __invoke(Request $request): Response
     {
         // GET is declared only for GLPI 11.0.1-11.0.6 router compatibility.
