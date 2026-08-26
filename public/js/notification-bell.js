@@ -71,7 +71,7 @@
             const token = markToken();
             if (!token) return false;
             try {
-                const response = await fetch(`${pluginRoot}/front/mark-read.php`, {
+                const response = await fetch(`${pluginRoot}/notifications/mark-read`, {
                     method: 'POST', credentials: 'same-origin',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: new URLSearchParams({ plugin_usernotifications_mark_token: token, ...(id ? { id: String(id) } : {}) }),
