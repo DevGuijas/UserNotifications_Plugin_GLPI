@@ -13,6 +13,7 @@ try {
         'notifications' => $notifications,
         'unread' => $unread,
         'mark_token' => $markToken,
+        'csrf_token' => Session::getNewCSRFToken(),
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 } catch (\Throwable $exception) {
     Toolbox::logInFile('php-errors', 'usernotifications feed: ' . $exception->getMessage() . PHP_EOL);

@@ -42,6 +42,6 @@ final class MarkReadController extends AbstractController
 
         $nextToken = bin2hex(random_bytes(32));
         $_SESSION['plugin_usernotifications_mark_token'] = $nextToken;
-        return new JsonResponse(['ok' => true, 'mark_token' => $nextToken]);
+        return new JsonResponse(['ok' => true, 'mark_token' => $nextToken, 'csrf_token' => Session::getNewCSRFToken()]);
     }
 }

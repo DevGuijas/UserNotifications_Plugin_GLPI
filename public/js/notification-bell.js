@@ -36,7 +36,7 @@
         const open = () => { panel.classList.remove('d-none'); toggle.setAttribute('aria-expanded', 'true'); };
         const formatDate = (date) => new Intl.DateTimeFormat(document.documentElement.lang || 'pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(date.replace(' ', 'T')));
         const render = (data) => {
-            state = { notifications: Array.isArray(data.notifications) ? data.notifications : [], unread: Number(data.unread) || 0, mark_token: data.mark_token || state.mark_token || '' };
+            state = { notifications: Array.isArray(data.notifications) ? data.notifications : [], unread: Number(data.unread) || 0, mark_token: data.mark_token || state.mark_token || '', csrf_token: data.csrf_token || state.csrf_token || '' };
             badge.textContent = state.unread > 99 ? '99+' : state.unread;
             badge.classList.toggle('d-none', state.unread === 0);
             markAllButton.disabled = state.unread === 0;
@@ -74,11 +74,12 @@
                 const response = await fetch(`${pluginRoot}/notifications/mark-read`, {
                     method: 'POST', credentials: 'same-origin',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({ plugin_usernotifications_mark_token: token, ...(id ? { id: String(id) } : {}) }),
+                    body: new URLSearchParams({ _glpi_csrf_token: state.csrf_token || '', plugin_usernotifications_mark_token: token, ...(id ? { id: String(id) } : {}) }),
                 });
                 const result = await response.json();
                 if (!response.ok || !result.ok) return false;
                 state.mark_token = result.mark_token || state.mark_token;
+                state.csrf_token = result.csrf_token || state.csrf_token;
                 state.notifications = state.notifications.map((notification) => (!id || notification.id === id ? { ...notification, is_read: true } : notification));
                 state.unread = state.notifications.filter((notification) => !notification.is_read).length;
                 render(state);
