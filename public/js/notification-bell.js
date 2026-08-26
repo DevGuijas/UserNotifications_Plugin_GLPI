@@ -10,15 +10,16 @@
 
     let attempts = 0;
     const initialize = () => {
-        if (document.getElementById('usernotifications-bell')) return;
-        const profileToggle = document.querySelector('.user-menu-dropdown-toggle');
+        const header = document.querySelector('[data-testid="main-header"]') || document.querySelector('header.topbar');
+        const profileToggle = Array.from(header?.querySelectorAll('.user-menu-dropdown-toggle') || []).find((element) => element.getClientRects().length > 0);
         const profileItem = profileToggle?.closest('.nav-item');
-        const userMenu = document.querySelector('.user-menu') || profileItem?.parentElement;
-        if (!userMenu) {
+        const userMenu = profileItem?.parentElement;
+        if (!userMenu || !profileItem) {
             if (attempts++ < 20) window.setTimeout(initialize, 250);
             return;
         }
 
+        document.getElementById('usernotifications-bell')?.remove();
         const wrapper = document.createElement('div');
         wrapper.className = 'nav-item usernotifications-wrapper';
         wrapper.id = 'usernotifications-bell';
