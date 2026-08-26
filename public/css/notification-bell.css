@@ -1,0 +1,17 @@
+.usernotifications-wrapper { position: relative; margin-right: .35rem; }
+.usernotifications-toggle { position: relative; border: 0; background: transparent; color: inherit; cursor: pointer; font-size: 1.25rem; }
+.usernotifications-badge { position: absolute; top: 0; right: -.25rem; min-width: 1.1rem; padding: .08rem .28rem; border: 2px solid var(--tblr-bg-surface, #fff); border-radius: 1rem; background: #d63939; color: #fff; font-size: .65rem; font-weight: 700; line-height: 1; }
+.usernotifications-panel { position: absolute; z-index: 1060; top: calc(100% + .55rem); right: 0; width: min(25rem, calc(100vw - 1.5rem)); overflow: hidden; border: 1px solid var(--tblr-border-color, #dce1e7); border-radius: .5rem; background: var(--tblr-bg-surface, #fff); box-shadow: 0 .5rem 1.5rem rgba(0, 0, 0, .18); color: var(--tblr-body-color, #182433); }
+.usernotifications-header, .usernotifications-footer { display: flex; align-items: center; justify-content: space-between; padding: .7rem .9rem; }
+.usernotifications-header { border-bottom: 1px solid var(--tblr-border-color, #dce1e7); }
+.usernotifications-close { border: 0; background: transparent; color: inherit; font-size: 1.5rem; line-height: 1; cursor: pointer; }
+.usernotifications-list { max-height: 22rem; overflow-y: auto; }
+.usernotifications-item { display: flex; gap: .65rem; padding: .75rem .9rem; border-bottom: 1px solid var(--tblr-border-color, #edf0f2); color: inherit; text-decoration: none; }
+.usernotifications-item:hover { background: rgba(32, 107, 196, .08); color: inherit; }
+.usernotifications-item.is-read { background: #f4f6f8; color: #6c757d; }
+.usernotifications-item > i { margin-top: .1rem; color: var(--tblr-primary, #206bc4); font-size: 1.15rem; }
+.usernotifications-item.is-read > i { color: #9aa4af; }
+.usernotifications-text { display: grid; gap: .2rem; }
+.usernotifications-text small, .usernotifications-empty { color: #6c757d; }
+.usernotifications-empty { margin: 0; padding: 1.25rem .9rem; text-align: center; }
+.usernotifications-footer { justify-content: flex-end; border-top: 1px solid var(--tblr-border-color, #dce1e7); }
