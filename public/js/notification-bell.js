@@ -36,7 +36,7 @@
         const open = () => { panel.classList.remove('d-none'); toggle.setAttribute('aria-expanded', 'true'); };
         const formatDate = (date) => new Intl.DateTimeFormat(document.documentElement.lang || 'pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(date.replace(' ', 'T')));
         const render = (data) => {
-            state = { notifications: Array.isArray(data.notifications) ? data.notifications : [], unread: Number(data.unread) || 0 };
+            state = { notifications: Array.isArray(data.notifications) ? data.notifications : [], unread: Number(data.unread) || 0, csrf_token: data.csrf_token || state.csrf_token || '' };
             badge.textContent = state.unread > 99 ? '99+' : state.unread;
             badge.classList.toggle('d-none', state.unread === 0);
             markAllButton.disabled = state.unread === 0;
@@ -66,7 +66,7 @@
                 });
             });
         };
-        const csrfToken = () => document.querySelector('meta[property="glpi:csrf_token"]')?.content || '';
+        const csrfToken = () => state.csrf_token || document.querySelector('meta[property="glpi:csrf_token"]')?.content || '';
         const markRead = async (id = 0) => {
             const token = csrfToken();
             if (!token) return false;
@@ -82,7 +82,7 @@
                 state.unread = state.notifications.filter((notification) => !notification.is_read).length;
                 render(state);
                 return true;
-            } catch (_) { return false; }
+            } catch (_) { render(state); return false; }
         };
         const refresh = async () => {
             try {
