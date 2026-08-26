@@ -1,23 +1,29 @@
 (() => {
     'use strict';
 
-    const script = document.currentScript;
-    if (!script) return;
-    const scriptUrl = new URL(script.src, window.location.href);
+    const pluginScript = Array.from(document.scripts).find((element) => element.src.includes('/plugins/usernotifications/js/notification-bell.js'));
+    if (!pluginScript) return;
+    const scriptUrl = new URL(pluginScript.src, window.location.href);
     const jsPathIndex = scriptUrl.pathname.lastIndexOf('/js/');
     if (jsPathIndex < 0) return;
     const pluginRoot = `${scriptUrl.origin}${scriptUrl.pathname.slice(0, jsPathIndex)}`;
 
+    let attempts = 0;
     const initialize = () => {
         if (document.getElementById('usernotifications-bell')) return;
-        const userMenu = document.querySelector('.user-menu');
-        if (!userMenu) return;
+        const profileToggle = document.querySelector('.user-menu-dropdown-toggle');
+        const profileItem = profileToggle?.closest('.nav-item');
+        const userMenu = document.querySelector('.user-menu') || profileItem?.parentElement;
+        if (!userMenu) {
+            if (attempts++ < 20) window.setTimeout(initialize, 250);
+            return;
+        }
 
         const wrapper = document.createElement('div');
         wrapper.className = 'nav-item usernotifications-wrapper';
         wrapper.id = 'usernotifications-bell';
         wrapper.innerHTML = `<button type="button" class="nav-link usernotifications-toggle" aria-label="Notificações" aria-expanded="false"><i class="ti ti-bell" aria-hidden="true"></i><span class="usernotifications-badge d-none"></span></button><section class="usernotifications-panel d-none" aria-label="Notificações"><header class="usernotifications-header"><strong>Notificações</strong><button type="button" class="usernotifications-close" aria-label="Fechar">×</button></header><div class="usernotifications-list" role="list"></div><footer class="usernotifications-footer"><button type="button" class="btn btn-link btn-sm usernotifications-mark">Marcar notificações como lidas</button></footer></section>`;
-        userMenu.insertBefore(wrapper, userMenu.firstElementChild);
+        if (profileItem) { profileItem.before(wrapper); } else { userMenu.insertBefore(wrapper, userMenu.firstElementChild); }
 
         const toggle = wrapper.querySelector('.usernotifications-toggle');
         const panel = wrapper.querySelector('.usernotifications-panel');

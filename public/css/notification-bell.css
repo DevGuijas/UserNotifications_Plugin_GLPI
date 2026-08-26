@@ -1,5 +1,5 @@
-.usernotifications-wrapper { position: relative; margin-right: .35rem; }
-.usernotifications-toggle { position: relative; border: 0; background: transparent; color: inherit; cursor: pointer; font-size: 1.25rem; }
+.usernotifications-wrapper { position: relative; display: flex !important; align-items: center; margin-right: .35rem; }
+.usernotifications-toggle { position: relative; display: inline-flex !important; align-items: center; justify-content: center; min-width: 2.25rem; min-height: 2.25rem; border: 0; background: transparent; color: inherit; cursor: pointer; font-size: 1.25rem; }
 .usernotifications-badge { position: absolute; top: 0; right: -.25rem; min-width: 1.1rem; padding: .08rem .28rem; border: 2px solid var(--tblr-bg-surface, #fff); border-radius: 1rem; background: #d63939; color: #fff; font-size: .65rem; font-weight: 700; line-height: 1; }
 .usernotifications-panel { position: absolute; z-index: 1060; top: calc(100% + .55rem); right: 0; width: min(25rem, calc(100vw - 1.5rem)); overflow: hidden; border: 1px solid var(--tblr-border-color, #dce1e7); border-radius: .5rem; background: var(--tblr-bg-surface, #fff); box-shadow: 0 .5rem 1.5rem rgba(0, 0, 0, .18); color: var(--tblr-body-color, #182433); }
 .usernotifications-header, .usernotifications-footer { display: flex; align-items: center; justify-content: space-between; padding: .7rem .9rem; }
